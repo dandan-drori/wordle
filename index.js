@@ -14,8 +14,7 @@ const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredG
   console.log("Let's play Wordle!");
   let win = false;
   let letters = INITIAL_LETTERS;
-  // const word = getRandomWord();
-  const word = 'zesty';
+  const word = getRandomWord();
   const guesses = [];
   while (guesses.length < 6) {
     let guess = await ask('Enter a word: ');

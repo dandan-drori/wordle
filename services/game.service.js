@@ -100,7 +100,7 @@ async function validateGuess(guess) {
 }
 
 async function endGame(win, word, guesses) {
-    const greet = win ? "Great Job!" : "Game Over :(";
+    const greet = win ? "\nGreat Job!" : "\nGame Over :(";
     console.log(greet);
     console.log("The word was: " + word.toUpperCase());
     await log({isWin: win, guesses, word});
