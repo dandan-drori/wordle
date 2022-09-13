@@ -28,6 +28,48 @@ function updateLetters(letters, guess) {
   return letters;
 }
 
+function bandcows(word, guess) {
+  const w = {
+    0: word[0],
+    1: word[1],
+    2: word[2],
+    3: word[3],
+    4: word[4],
+  }
+  const g = {
+    0: guess[0],
+    1: guess[1],
+    2: guess[2],
+    3: guess[3],
+    4: guess[4],
+  }
+}
+
+function printColoredGuessV2(word, guess) {
+  const w = getLettersMap(word);
+  const g = getLettersMap(guess);
+  for (let i = 0; i < word.length; ++i) {
+    const currLetter = guess.charAt(i);
+    if (!w[currLetter] && w[currLetter] !== 0) {
+      console.log('grey');
+    } else {
+      if (currLetter === word.charAt(i)) {
+        console.log('green');
+      } else {
+        console.log('yellow');
+      }
+    }
+  }
+}
+
+function getLettersMap(word) {
+  const map = {};
+  for (let i = 0; i < word.length; ++i) {
+    map[word.charAt(i)] = i;
+  }
+  return map
+}
+
 function printColoredGuess(word, guess) {
   const gl = guess.split('');
   const guessList = gl.map((letter) => {
@@ -102,6 +144,7 @@ module.exports = {
   printLetters,
   updateLetters,
   printColoredGuess,
+  printColoredGuessV2,
   validateGuess,
   endGame,
   isTodayDone,

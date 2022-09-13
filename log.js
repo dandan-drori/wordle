@@ -103,6 +103,10 @@ function getSpaces(num) {
   return spaces;
 }
 
+function getLogFilePath() {
+  
+}
+
 module.exports = {
   isTodayDone,
   log,

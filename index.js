@@ -2,7 +2,7 @@
 
 const { ask, close } = require("./rl.js");
 const { INITIAL_LETTERS } = require("./constants.js");
-const { getRandomWord, printLetters, updateLetters, validateGuess, printColoredGuess, endGame, isTodayDone, printStats, printLastGameGuesses } = require("./helpers.js");
+const { getRandomWord, printLetters, updateLetters, validateGuess, printColoredGuess ,printColoredGuessV2, endGame, isTodayDone, printStats, printLastGameGuesses } = require("./helpers.js");
 
 
 ;(async () => {
@@ -34,6 +34,7 @@ const { getRandomWord, printLetters, updateLetters, validateGuess, printColoredG
       break;
     }
     printColoredGuess(word, guess);
+    printColoredGuessV2(word, guess);
     letters = updateLetters(letters, guess);
     printLetters(letters);
     console.log('Remaining guesses: ' + (6 - guesses.length) + '\n');
