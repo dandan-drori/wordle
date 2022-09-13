@@ -30,28 +30,24 @@ function updateLetters(letters, guess) {
 
 function printColoredGuessV2(word, guess) {
     const w = getLettersMap(word);
-    const g = getLettersMap(guess);
-    const colors = [];
+    const matchMap = {};
+    console.log('');
+    process.stdout.write(' ');
     for (let i = 0; i < word.length; ++i) {
         const currLetter = guess.charAt(i);
         if (!w[currLetter] && w[currLetter] !== 0) {
-            colors.push(grey);
+            process.stdout.write(grey + currLetter.toUpperCase());
         } else {
             if (currLetter === word.charAt(i)) {
-                colors.push(green);
+                process.stdout.write(green + currLetter.toUpperCase());
             } else {
-                colors.push(yellow);
+                const color = matchMap[currLetter] ? grey : yellow;
+                process.stdout.write(color + currLetter.toUpperCase());
+                matchMap[currLetter] = true;
             }
         }
     }
-
-    let out = '\n ';
-    for (let i = 0; i < word.length; ++i) {
-        const letter = guess.charAt(i).toUpperCase();
-        const color = colors[i];
-        out += color + letter + grey;
-    }
-    console.log(out + white + '\n');
+    console.log(white + '\n');
 }
 
 function getLettersMap(word) {
@@ -108,6 +104,7 @@ async function endGame(win, word, guesses) {
     console.log(greet);
     console.log("The word was: " + word.toUpperCase());
     await log({isWin: win, guesses, word});
+    await printLastGameGuesses();
     printStats();
 }
 

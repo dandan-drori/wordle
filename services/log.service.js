@@ -37,8 +37,6 @@ function printStats() {
   const games = getGames();
   const {wins, guesses} = getWinsAndGuesses();
   console.log(`
-    Last game's word: ${getLastGameWord()}
-
     Success: ${getSuccessRate(wins, games)}
     Wins: ${wins}
     Games: ${games}

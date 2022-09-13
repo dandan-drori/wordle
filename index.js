@@ -6,16 +6,16 @@ const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredG
 
 ;(async () => {
   if (isTodayDone()) {
-    console.log("You already found today's word!");
-    printStats();
     await printLastGameGuesses();
+    printStats();
     close();
     return;
   }
   console.log("Let's play Wordle!");
   let win = false;
   let letters = INITIAL_LETTERS;
-  const word = getRandomWord();
+  // const word = getRandomWord();
+  const word = 'zesty';
   const guesses = [];
   while (guesses.length < 6) {
     let guess = await ask('Enter a word: ');
