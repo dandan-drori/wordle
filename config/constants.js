@@ -1,3 +1,5 @@
+const path = require('path');
+
 const INITIAL_LETTERS = {
   a: false,
   b: false,
@@ -40,7 +42,7 @@ const WIN_LOG = 'W';
 
 const LOSE_LOG = 'L';
 
-const LOG_FILE_PATH = '/data/data/com.termux/files/home/node/readline/logs.json';
+const LOG_FILE_PATH = path.join(__dirname, 'logs.json');
 
 const PRINT_LETTERS_BREAKS = 'ejot';
 

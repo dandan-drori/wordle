@@ -1,30 +1,29 @@
 #!/usr/bin/env node
 
-const { ask, close } = require("./rl.js");
-const { INITIAL_LETTERS } = require("./constants.js");
-const { getRandomWord, printLetters, updateLetters, validateGuess, printColoredGuess ,printColoredGuessV2, endGame, isTodayDone, printStats, printLastGameGuesses } = require("./helpers.js");
-
+const { ask, close } = require("./services/readline.service.js");
+const { INITIAL_LETTERS } = require("./config/constants.js");
+const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredGuessV2, endGame, isTodayDone, printStats, printLastGameGuesses } = require("./services/game.service.js");
 
 ;(async () => {
   if (isTodayDone()) {
-    console.log('You already found todays word!');
+    console.log("You already found today's word!");
     printStats();
-    printLastGameGuesses();
+    await printLastGameGuesses();
     close();
     return;
   }
-  console.log("Let's play wordle!");
+  console.log("Let's play Wordle!");
   let win = false;
   let letters = INITIAL_LETTERS;
   const word = getRandomWord();
   const guesses = [];
   while (guesses.length < 6) {
-    let guess = await ask("Enter a word: ");
+    let guess = await ask('Enter a word: ');
     guess = guess.toLowerCase();
     let isValid = await validateGuess(guess);
     while (!isValid) {
-      console.log("Invalid input!");
-      guess = await ask("Enter a word: ");
+      console.log('Invalid input!');
+      guess = await ask('Enter a word: ');
       isValid = await validateGuess(guess);
     }
     guesses.push(guess);
@@ -33,11 +32,10 @@ const { getRandomWord, printLetters, updateLetters, validateGuess, printColoredG
       await endGame(win, word, guesses);
       break;
     }
-    printColoredGuess(word, guess);
     printColoredGuessV2(word, guess);
     letters = updateLetters(letters, guess);
     printLetters(letters);
-    console.log('Remaining guesses: ' + (6 - guesses.length) + '\n');
+    console.log(`Remaining guesses: ${6 - guesses.length}\n`);
   }
   if (!win && guesses.length >= 6) {
     await endGame(win, word, guesses);

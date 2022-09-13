@@ -1,7 +1,7 @@
-const rawLogs = require("./logs.json");
+const rawLogs = require("../db/logs.json");
 const { writeFile } = require("fs").promises;
-const { greenBg, reset } = require("./colors.js");
-const { INITIAL_GUESSES, WIN_LOG, LOSE_LOG, LOG_FILE_PATH } = require("./constants.js");
+const { greenBg, reset } = require("../config/colors.js");
+const { INITIAL_GUESSES, WIN_LOG, LOSE_LOG, LOG_FILE_PATH } = require("../config/constants.js");
 
 function getKey() {
   const d = new Date();
@@ -37,7 +37,7 @@ function printStats() {
   const games = getGames();
   const {wins, guesses} = getWinsAndGuesses();
   console.log(`
-    Last game word: ${getLastGameWord()}
+    Last game's word: ${getLastGameWord()}
 
     Success: ${getSuccessRate(wins, games)}
     Wins: ${wins}
@@ -101,10 +101,6 @@ function getSpaces(num) {
     spaces += ' ';
   }
   return spaces;
-}
-
-function getLogFilePath() {
-  
 }
 
 module.exports = {
