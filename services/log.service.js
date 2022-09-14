@@ -23,14 +23,13 @@ async function log(logObj) {
 }
 
 function formatLog(log) {
-  const w = log.isWin ? WIN_LOG : LOSE_LOG;
   const g = log.guesses.length;
   const word = log.word;
   let guesses = '';
   log.guesses.forEach((guess) => {
     guesses += `-${guess}`;
   });
-  return `${w}-${g}-${word}${guesses}`;
+  return `${log.status}-${g}-${word}${guesses}`;
 }
 
 function printStats() {

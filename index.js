@@ -2,7 +2,7 @@
 
 const { ask, close } = require("./services/readline.service.js");
 const { INITIAL_LETTERS } = require("./config/constants.js");
-const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredGuessV2, endGame, isTodayDone, printStats, printLastGameGuesses } = require("./services/game.service.js");
+const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredGuessV2, endGame, isTodayDone, printStats, printLastGameGuesses, log } = require("./services/game.service.js");
 
 ;(async () => {
   if (isTodayDone()) {
@@ -11,8 +11,12 @@ const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredG
     close();
     return;
   }
+  //if (isInProgress()) {
+  //  loadGame();
+  //  move declarations of vars above isTodayDone call
+  //}
   console.log("Let's play Wordle!");
-  let win = false;
+  let status = 'P';
   let letters = INITIAL_LETTERS;
   const word = getRandomWord();
   const guesses = [];
@@ -21,14 +25,15 @@ const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredG
     guess = guess.toLowerCase();
     let isValid = await validateGuess(guess);
     while (!isValid) {
-      console.log('Invalid input!');
+      console.log('Word not recognized! Try another word');
       guess = await ask('Enter a word: ');
       isValid = await validateGuess(guess);
     }
     guesses.push(guess);
+    await log({status, word, guesses});
     if (word === guess) {
-      win = true;
-      await endGame(win, word, guesses);
+      status = 'W';
+      await endGame(status, word, guesses);
       break;
     }
     printColoredGuessV2(word, guess);
@@ -36,8 +41,9 @@ const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredG
     printLetters(letters);
     console.log(`Remaining guesses: ${6 - guesses.length}\n`);
   }
-  if (!win && guesses.length >= 6) {
-    await endGame(win, word, guesses);
+  if (status !== 'W' && guesses.length >= 6) {
+    status = 'L';
+    await endGame(status, word, guesses);
   }
   close();
 })();

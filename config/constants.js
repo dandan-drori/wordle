@@ -42,7 +42,7 @@ const WIN_LOG = 'W';
 
 const LOSE_LOG = 'L';
 
-const LOG_FILE_PATH = path.join(__dirname, 'logs.json');
+const LOG_FILE_PATH = path.join(__dirname, '..', 'db', 'logs.json');
 
 const PRINT_LETTERS_BREAKS = 'ejot';
 

@@ -99,11 +99,10 @@ async function validateGuess(guess) {
         words.includes(guess);
 }
 
-async function endGame(win, word, guesses) {
-    const greet = win ? "\nGreat Job!" : "\nGame Over :(";
+async function endGame(status, word, guesses) {
+    const greet = status === 'W' ? "\nGreat Job!" : "\nGame Over :(";
     console.log(greet);
-    console.log("The word was: " + word.toUpperCase());
-    await log({isWin: win, guesses, word});
+    await log({status, guesses, word});
     await printLastGameGuesses();
     printStats();
 }
@@ -113,7 +112,7 @@ async function printLastGameGuesses() {
     const word = getLastGameWord().toLowerCase();
     for (const guess of guessesList) {
         await sleep(1000);
-        await printColoredGuess(word, guess);
+        await printColoredGuessV2(word, guess);
     }
 }
 
@@ -128,4 +127,5 @@ module.exports = {
     isTodayDone,
     printStats,
     printLastGameGuesses,
+    log,
 }
