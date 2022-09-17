@@ -38,9 +38,11 @@ const INITIAL_GUESSES = {
   6: 0,
 };
 
-const WIN_LOG = 'W';
-
-const LOSE_LOG = 'L';
+const STATUS_LOGS = {
+  WIN: 'W',
+  LOSE: 'L',
+  PROGRESS: 'P',
+}
 
 const LOG_FILE_PATH = path.join(__dirname, '..', 'db', 'logs.json');
 
@@ -50,7 +52,6 @@ module.exports = {
   INITIAL_LETTERS,
   INITIAL_GUESSES,
   PRINT_LETTERS_BREAKS,
-  WIN_LOG,
-  LOSE_LOG,
+  STATUS_LOGS,
   LOG_FILE_PATH,
 }

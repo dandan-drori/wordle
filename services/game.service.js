@@ -1,8 +1,8 @@
 const words = require("../db/words.json");
-const {grey, white, green, yellow} = require("../config/colors");
-const {PRINT_LETTERS_BREAKS} = require("../config/constants");
-const {log, printStats, getLastGameGuesses, getLastGameWord, isTodayDone} = require("./log.service");
-const {sleep} = require("./util.service");
+const { grey, white, green, yellow } = require("../config/colors");
+const { PRINT_LETTERS_BREAKS, STATUS_LOGS } = require("../config/constants");
+const { sleep } = require("./util.service");
+const { logGame, printStats, getTodaysGame } = require("./log-v2.service");
 
 function getRandomWord() {
     const idx = Math.floor(Math.random() * words.length);
@@ -28,24 +28,26 @@ function updateLetters(letters, guess) {
     return letters;
 }
 
-function printColoredGuessV2(word, guess) {
-    const w = getLettersMap(word);
+async function printColoredGuessV2(word, guess) {
+    const wordMap = getLettersMap(word);
     const matchMap = {};
-    console.log('');
     process.stdout.write(' ');
     for (let i = 0; i < word.length; ++i) {
         const currLetter = guess.charAt(i);
-        if (!w[currLetter] && w[currLetter] !== 0) {
+        if (!wordMap[currLetter] && wordMap[currLetter] !== 0) {
+            await sleep(50);
             process.stdout.write(grey + currLetter.toUpperCase());
-        } else {
-            if (currLetter === word.charAt(i)) {
-                process.stdout.write(green + currLetter.toUpperCase());
-            } else {
-                const color = matchMap[currLetter] ? grey : yellow;
-                process.stdout.write(color + currLetter.toUpperCase());
-                matchMap[currLetter] = true;
-            }
+            continue
         }
+        if (currLetter === word.charAt(i)) {
+            await sleep(50);
+            process.stdout.write(green + currLetter.toUpperCase());
+            continue
+        }
+        const color = matchMap[currLetter] ? grey : yellow;
+        await sleep(50);
+        process.stdout.write(color + currLetter.toUpperCase());
+        matchMap[currLetter] = true;
     }
     console.log(white + '\n');
 }
@@ -58,6 +60,7 @@ function getLettersMap(word) {
     return map
 }
 
+// unused in favor of v2
 async function printColoredGuess(word, guess) {
     const gl = guess.split('');
     const guessList = gl.map((letter) => {
@@ -86,10 +89,9 @@ async function printColoredGuess(word, guess) {
     for (const l of guessList) {
         const letter = l.letter.toUpperCase();
         const color = l.color;
-        await sleep(75);
+        await sleep(50);
         process.stdout.write(color + letter + grey);
     }
-    await sleep(50);
     console.log('');
 }
 
@@ -100,16 +102,17 @@ async function validateGuess(guess) {
 }
 
 async function endGame(status, word, guesses) {
-    const greet = status === 'W' ? "\nGreat Job!" : "\nGame Over :(";
+    const greet = status === STATUS_LOGS.WIN ? "\nGreat Job!" : "\nGame Over :(";
     console.log(greet);
-    await log({status, guesses, word});
+    await logGame({status, guesses, word});
     await printLastGameGuesses();
-    printStats();
+    await printStats();
 }
 
 async function printLastGameGuesses() {
-    const guessesList = getLastGameGuesses();
-    const word = getLastGameWord().toLowerCase();
+    const todaysGame = await getTodaysGame();
+    const guessesList = todaysGame.guesses;
+    const word = todaysGame.word.toLowerCase();
     for (const guess of guessesList) {
         await sleep(1000);
         await printColoredGuessV2(word, guess);
@@ -124,8 +127,6 @@ module.exports = {
     printColoredGuessV2,
     validateGuess,
     endGame,
-    isTodayDone,
     printStats,
     printLastGameGuesses,
-    log,
 }

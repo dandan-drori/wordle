@@ -1,7 +1,7 @@
 const rawLogs = require("../db/logs.json");
 const { writeFile } = require("fs").promises;
 const { greenBg, reset } = require("../config/colors.js");
-const { INITIAL_GUESSES, WIN_LOG, LOSE_LOG, LOG_FILE_PATH } = require("../config/constants.js");
+const { INITIAL_GUESSES, STATUS_LOGS, LOG_FILE_PATH } = require("../config/constants.js");
 
 function getKey() {
   const d = new Date();
@@ -13,7 +13,22 @@ function getKey() {
 
 function isTodayDone() {
   const key = getKey();
-  return !!rawLogs[key];
+  const log = rawLogs[key];
+  if (!log) {
+    return false;
+  }
+  const status = log.split('-')[0];
+  return status !== STATUS_LOGS.PROGRESS;
+}
+
+function isInProgress() {
+  const key = getKey();
+  const log = rawLogs[key];
+  if (!log) {
+    return false;
+  }
+  const status = log.split('-')[0];
+  return status === STATUS_LOGS.PROGRESS;
 }
 
 async function log(logObj) {
@@ -63,7 +78,7 @@ function getWinsAndGuesses() {
   const guesses = INITIAL_GUESSES;
   for (const l in rawLogs) {
     const splitLogs = rawLogs[l].split('-');
-    if (splitLogs[0] === WIN_LOG) {
+    if (splitLogs[0] === STATUS_LOGS.WIN) {
       wins++;
       const guess = splitLogs[1];
       guesses[guess] = guesses[guess] + 1;
@@ -87,7 +102,7 @@ function getLastGame() {
 function printGuessesStats(guesses) {
   let out = '';
   for (const guess in guesses) {
-    out += '    ' + guess + ' ' + greenBg + getSpaces(guesses[guess]) + (guesses[guess] || '') + reset + '\n';
+    out += reset + '    ' + guess + ' ' + greenBg + getSpaces(guesses[guess]) + (guesses[guess] || '') + reset + '\n';
   }
   return out;
 }
@@ -102,8 +117,9 @@ function getSpaces(num) {
 
 module.exports = {
   isTodayDone,
+  isInProgress,
   log,
   printStats,
   getLastGameGuesses,
-  getLastGameWord
+  getLastGameWord,
 }

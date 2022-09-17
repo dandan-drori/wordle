@@ -1,25 +1,36 @@
 #!/usr/bin/env node
 
-const { ask, close } = require("./services/readline.service.js");
-const { INITIAL_LETTERS } = require("./config/constants.js");
-const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredGuessV2, endGame, isTodayDone, printStats, printLastGameGuesses, log } = require("./services/game.service.js");
+const { ask, close } = require("./services/readline.service");
+const { INITIAL_LETTERS, STATUS_LOGS } = require("./config/constants");
+const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredGuessV2, endGame, printLastGameGuesses } = require("./services/game.service");
+const { getTodaysGame, printStats, logGame} = require("./services/log-v2.service");
 
 ;(async () => {
-  if (isTodayDone()) {
+  console.log("Let's play Wordle!\n");
+  let status = STATUS_LOGS.PROGRESS;
+  let letters = INITIAL_LETTERS;
+  let word = getRandomWord();
+  let guesses = [];
+  const todaysGame = await getTodaysGame();
+  if (!!todaysGame && todaysGame.status === STATUS_LOGS.PROGRESS) {
+    console.log('Continuing your last game\n');
+    guesses = todaysGame.guesses;
+    word = todaysGame.word.toLowerCase();
+    for (const guess of guesses) {
+      const lowerGuess = guess.toLowerCase();
+      letters = updateLetters(letters, lowerGuess);
+      await printColoredGuessV2(word, lowerGuess);
+    }
+    printLetters(letters);
+  }
+  if (!!todaysGame && todaysGame.status !== STATUS_LOGS.PROGRESS) {
     await printLastGameGuesses();
-    printStats();
+    await printStats();
     close();
     return;
+  } else {
+    await logGame({status, word, guesses});
   }
-  //if (isInProgress()) {
-  //  loadGame();
-  //  move declarations of vars above isTodayDone call
-  //}
-  console.log("Let's play Wordle!");
-  let status = 'P';
-  let letters = INITIAL_LETTERS;
-  const word = getRandomWord();
-  const guesses = [];
   while (guesses.length < 6) {
     let guess = await ask('Enter a word: ');
     guess = guess.toLowerCase();
@@ -30,19 +41,21 @@ const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredG
       isValid = await validateGuess(guess);
     }
     guesses.push(guess);
-    await log({status, word, guesses});
+    await logGame({status, word, guesses});
     if (word === guess) {
-      status = 'W';
+      status = STATUS_LOGS.WIN;
       await endGame(status, word, guesses);
       break;
     }
-    printColoredGuessV2(word, guess);
+    for (let i = 0; i < guesses.length; ++i) {
+      await printColoredGuessV2(word, guesses[i]);
+    }
     letters = updateLetters(letters, guess);
     printLetters(letters);
     console.log(`Remaining guesses: ${6 - guesses.length}\n`);
   }
-  if (status !== 'W' && guesses.length >= 6) {
-    status = 'L';
+  if (status !== STATUS_LOGS.WIN && guesses.length >= 6) {
+    status = STATUS_LOGS.LOSE;
     await endGame(status, word, guesses);
   }
   close();
