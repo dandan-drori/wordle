@@ -4,9 +4,9 @@ const { ask, close } = require("./services/readline.service");
 const { INITIAL_LETTERS, STATUS_LOGS } = require("./config/constants");
 const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredGuessV2, endGame, printLastGameGuesses } = require("./services/game.service");
 const { getTodaysGame, printStats, logGame} = require("./services/log-v2.service");
+const { mongoClient } = require("./services/db.service");
 
 ;(async () => {
-  console.log("Let's play Wordle!\n");
   let status = STATUS_LOGS.PROGRESS;
   let letters = INITIAL_LETTERS;
   let word = getRandomWord();
@@ -27,10 +27,11 @@ const { getTodaysGame, printStats, logGame} = require("./services/log-v2.service
     await printLastGameGuesses();
     await printStats();
     close();
+    mongoClient.close();
     return;
-  } else {
-    await logGame({status, word, guesses});
   }
+  await logGame({status, word, guesses});
+  console.log("Let's play Wordle!\n");
   while (guesses.length < 6) {
     let guess = await ask('Enter a word: ');
     guess = guess.toLowerCase();
@@ -59,4 +60,5 @@ const { getTodaysGame, printStats, logGame} = require("./services/log-v2.service
     await endGame(status, word, guesses);
   }
   close();
+  mongoClient.close();
 })();
