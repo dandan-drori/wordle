@@ -19,12 +19,12 @@ async function logGame(log) {
 }
 
 async function printStats() {
-    const games = await getAllGames().length;
+    const games = await getAllGames();
     const {wins, guesses} = getWinsAndGuesses(games);
     console.log(`
-    Success: ${getSuccessRate(wins, games)}
+    Success: ${getSuccessRate(wins, games.length)}
     Wins: ${wins}
-    Games: ${games}
+    Games: ${games.length}
 
     Guesses:
 ${printGuessesStats(guesses)}
