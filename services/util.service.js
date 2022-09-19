@@ -1,5 +1,5 @@
-const { RESET, GREEN_BG } = require("../config/colors.js");
-const { INITIAL_GUESSES, STATUS_LOGS } = require("../config/constants.js");
+const { RESET, GREEN_BG } = require("../config/colors");
+const { INITIAL_GUESSES, STATUS_LOGS } = require("../config/constants");
 
 function getTodaysDate() {
   const d = new Date();
