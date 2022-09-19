@@ -1,10 +1,11 @@
-const words = require("../db/words.json");
 const { grey, white, green, yellow } = require("../config/colors");
 const { PRINT_LETTERS_BREAKS, STATUS_LOGS } = require("../config/constants");
 const { sleep } = require("./util.service");
-const { logGame, printStats, getTodaysGame } = require("./log-v2.service");
+const { logGame, printStats } = require("./log-v2.service");
+const { getAvailableWords } = require("./words.service");
 
-function getRandomWord() {
+async function getRandomWord() {
+    const words = await getAvailableWords();
     const idx = Math.floor(Math.random() * words.length);
     return words[idx];
 }
@@ -101,18 +102,18 @@ async function validateGuess(guess) {
         words.includes(guess);
 }
 
-async function endGame(status, word, guesses, todaysGame) {
+async function endGame(status, word, guesses, todaysGame, col) {
     const greet = status === STATUS_LOGS.WIN ? "\nGreat Job!" : "\nGame Over :(";
     console.log(greet);
-    await logGame({status, guesses, word});
+    await logGame({status, word, guesses}, col);
     await printLastGameGuesses(todaysGame);
-    await printStats();
+    await printStats(col);
 }
 
 async function printLastGameGuesses(todaysGame) {
     const word = todaysGame.word.toLowerCase();
     for (const guess of todaysGame.guesses) {
-        await sleep(1000);
+        await sleep(100);
         await printColoredGuessV2(word, guess);
     }
 }

@@ -1,6 +1,26 @@
 {
+  "name": "wordle",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "./index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dandan-drori/wordle.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dandan-drori/wordle/issues"
+  },
+  "homepage": "https://github.com/dandan-drori/wordle#readme",
+  "description": "",
   "dependencies": {
     "dotenv": "^16.0.2",
     "mongodb": "^4.9.1"
-  }
+  },
+  "devDependencies": {}
 }
