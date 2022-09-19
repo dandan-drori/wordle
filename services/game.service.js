@@ -1,4 +1,4 @@
-const { grey, white, green, yellow } = require("../config/colors");
+const { GREY, WHITE, GREEN, YELLOW } = require("../config/colors");
 const { PRINT_LETTERS_BREAKS, STATUS_LOGS } = require("../config/constants");
 const { sleep } = require("./util.service");
 const { logGame, printStats } = require("./log-v2.service");
@@ -13,10 +13,10 @@ async function getRandomWord() {
 function printLetters(letters) {
     let out = ' ';
     for (const letter in letters) {
-        const color = letters[letter] ? grey : white;
+        const color = letters[letter] ? GREY : WHITE;
         const breaks = PRINT_LETTERS_BREAKS;
         const end = breaks.includes(letter) ? '\n ' : '';
-        out += color + letter.toUpperCase() + white + end;
+        out += color + letter.toUpperCase() + WHITE + end;
     }
     console.log(out + '\n');
 }
@@ -37,20 +37,20 @@ async function printColoredGuessV2(word, guess) {
         const currLetter = guess.charAt(i);
         if (!wordMap[currLetter] && wordMap[currLetter] !== 0) {
             await sleep(50);
-            process.stdout.write(grey + currLetter.toUpperCase());
+            process.stdout.write(GREY + currLetter.toUpperCase());
             continue
         }
         if (currLetter === word.charAt(i)) {
             await sleep(50);
-            process.stdout.write(green + currLetter.toUpperCase());
+            process.stdout.write(GREEN + currLetter.toUpperCase());
             continue
         }
-        const color = matchMap[currLetter] ? grey : yellow;
+        const color = matchMap[currLetter] ? GREY : YELLOW;
         await sleep(50);
         process.stdout.write(color + currLetter.toUpperCase());
         matchMap[currLetter] = true;
     }
-    console.log(white + '\n');
+    console.log(WHITE + '\n');
 }
 
 function getLettersMap(word) {
@@ -67,20 +67,20 @@ async function printColoredGuess(word, guess) {
     const guessList = gl.map((letter) => {
         return {
             letter,
-            color: grey,
+            color: GREY,
         }
     });
 
     for (let i = 0; i < word.length; ++i) {
         if (word[i] === guess[i]) {
-            guessList[i].color = green;
+            guessList[i].color = GREEN;
         }
 
         for (let j = 0; j < guess.length; ++j) {
             if (word[i] === guess[j]) {
-                const idx = guessList.findIndex((g) => g.letter === word[i] && g.color !== green);
+                const idx = guessList.findIndex((g) => g.letter === word[i] && g.color !== GREEN);
                 if (idx !== -1) {
-                    guessList[idx].color = yellow;
+                    guessList[idx].color = YELLOW;
                 }
             }
         }
@@ -91,7 +91,7 @@ async function printColoredGuess(word, guess) {
         const letter = l.letter.toUpperCase();
         const color = l.color;
         await sleep(50);
-        process.stdout.write(color + letter + grey);
+        process.stdout.write(color + letter + GREY);
     }
     console.log('');
 }

@@ -1,6 +1,6 @@
 const rawLogs = require("../db/logs.json");
 const { writeFile } = require("fs").promises;
-const { greenBg, reset } = require("../config/colors.js");
+const { GREEN_BG, RESET } = require("../config/colors.js");
 const { INITIAL_GUESSES, STATUS_LOGS, LOG_FILE_PATH } = require("../config/constants.js");
 
 function getKey() {
@@ -102,7 +102,7 @@ function getLastGame() {
 function printGuessesStats(guesses) {
   let out = '';
   for (const guess in guesses) {
-    out += reset + '    ' + guess + ' ' + greenBg + getSpaces(guesses[guess]) + (guesses[guess] || '') + reset + '\n';
+    out += RESET + '    ' + guess + ' ' + GREEN_BG + getSpaces(guesses[guess]) + (guesses[guess] || '') + RESET + '\n';
   }
   return out;
 }

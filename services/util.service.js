@@ -1,5 +1,5 @@
-const {reset, greenBg} = require("../config/colors.js");
-const {INITIAL_GUESSES, STATUS_LOGS} = require("../config/constants.js");
+const { RESET, GREEN_BG } = require("../config/colors.js");
+const { INITIAL_GUESSES, STATUS_LOGS } = require("../config/constants.js");
 
 function getTodaysDate() {
   const d = new Date();
@@ -32,7 +32,7 @@ function getSuccessRate(wins, games) {
 function printGuessesStats(guesses) {
   let out = '';
   for (const guess in guesses) {
-    out += reset + '    ' + guess + ' ' + greenBg + getSpaces(guesses[guess]) + (guesses[guess] || '') + reset + '\n';
+    out += RESET + '    ' + guess + ' ' + GREEN_BG + getSpaces(guesses[guess]) + (guesses[guess] || '') + RESET + '\n';
   }
   return out;
 }
