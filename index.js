@@ -24,7 +24,7 @@ const { mongoClient } = require("./services/db.service");
     printLetters(letters);
   }
   if (!!todaysGame && todaysGame.status !== STATUS_LOGS.PROGRESS) {
-    await printLastGameGuesses();
+    await printLastGameGuesses(todaysGame);
     await printStats();
     close();
     mongoClient.close();
@@ -45,7 +45,7 @@ const { mongoClient } = require("./services/db.service");
     await logGame({status, word, guesses});
     if (word === guess) {
       status = STATUS_LOGS.WIN;
-      await endGame(status, word, guesses);
+      await endGame(status, word, guesses, todaysGame);
       break;
     }
     for (let i = 0; i < guesses.length; ++i) {
@@ -57,7 +57,7 @@ const { mongoClient } = require("./services/db.service");
   }
   if (status !== STATUS_LOGS.WIN && guesses.length >= 6) {
     status = STATUS_LOGS.LOSE;
-    await endGame(status, word, guesses);
+    await endGame(status, word, guesses, todaysGame);
   }
   close();
   mongoClient.close();

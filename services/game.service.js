@@ -101,19 +101,17 @@ async function validateGuess(guess) {
         words.includes(guess);
 }
 
-async function endGame(status, word, guesses) {
+async function endGame(status, word, guesses, todaysGame) {
     const greet = status === STATUS_LOGS.WIN ? "\nGreat Job!" : "\nGame Over :(";
     console.log(greet);
     await logGame({status, guesses, word});
-    await printLastGameGuesses();
+    await printLastGameGuesses(todaysGame);
     await printStats();
 }
 
-async function printLastGameGuesses() {
-    const todaysGame = await getTodaysGame();
-    const guessesList = todaysGame.guesses;
+async function printLastGameGuesses(todaysGame) {
     const word = todaysGame.word.toLowerCase();
-    for (const guess of guessesList) {
+    for (const guess of todaysGame.guesses) {
         await sleep(1000);
         await printColoredGuessV2(word, guess);
     }
