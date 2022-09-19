@@ -1,4 +1,3 @@
-const { getLogsCollection } = require("./db.service");
 const { printGuessesStats, getSuccessRate, getWinsAndGuesses, getTodaysDate } = require("./util.service");
 
 async function getAllGames(col) {

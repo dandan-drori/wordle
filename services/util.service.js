@@ -53,10 +53,51 @@ function getWinsAndGuesses(games) {
   };
 }
 
+function isInProgress(todaysGame) {
+  return !!todaysGame && todaysGame.status === STATUS_LOGS.PROGRESS;
+}
+
+function isTodayDone(todaysGame) {
+  return !!todaysGame && todaysGame.status !== STATUS_LOGS.PROGRESS;
+}
+
+function progressGreet() {
+  console.log('Resuming your last game...\n');
+}
+
+async function exit(mongoClient, closeRL) {
+  await mongoClient.close();
+  closeRL();
+}
+
+function printRemainingGuessesCount(initialGuesses, guesses) {
+  console.log(`Remaining guesses: ${initialGuesses.keys().length - guesses.length}\n`);
+}
+
+function isLose(guesses, initialGuesses) {
+  return status !== STATUS_LOGS.WIN && guesses.length >= initialGuesses.keys().length;
+}
+
+function invalidWordWarning() {
+  console.log('Word not recognized! Try another word.');
+}
+
+function initialGreet() {
+  console.log("Let's play Wordle!\n");
+}
+
 module.exports = {
   getTodaysDate,
   sleep,
   getSuccessRate,
   printGuessesStats,
   getWinsAndGuesses,
+  isInProgress,
+  isTodayDone,
+  progressGreet,
+  exit,
+  printRemainingGuessesCount,
+  isLose,
+  invalidWordWarning,
+  initialGreet,
 }

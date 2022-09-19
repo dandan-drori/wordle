@@ -1,10 +1,15 @@
 #!/usr/bin/env node
 
 const { ask, close } = require("./services/readline.service");
-const { INITIAL_LETTERS, STATUS_LOGS } = require("./config/constants");
-const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredGuessV2, endGame, printLastGameGuesses } = require("./services/game.service");
+const { INITIAL_LETTERS, STATUS_LOGS, INITIAL_GUESSES, ASK_INPUT_TEXT } = require("./config/constants");
+const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredGuessV2, endGame,
+  printLastGameGuesses
+} = require("./services/game.service");
 const { getTodaysGame, printStats, logGame } = require("./services/log-v2.service");
 const { mongoClient, getLogsCollection } = require("./services/db.service");
+const { isInProgress, isTodayDone, progressGreet, exit, printRemainingGuessesCount, isLose, invalidWordWarning,
+  initialGreet
+} = require("./services/util.service");
 
 ;(async () => {
   let status = STATUS_LOGS.PROGRESS;
@@ -13,33 +18,33 @@ const { mongoClient, getLogsCollection } = require("./services/db.service");
   let guesses = [];
   const logsCol = await getLogsCollection();
   const todaysGame = await getTodaysGame(logsCol);
-  if (!!todaysGame && todaysGame.status === STATUS_LOGS.PROGRESS) {
-    console.log('Continuing your last game\n');
+  if (isInProgress(todaysGame)) {
+    progressGreet();
     guesses = todaysGame.guesses;
+    if (word.toLowerCase() !== todaysGame.word.toLowerCase()) {
+      await logGame({status, word, guesses}, logsCol);
+    }
     word = todaysGame.word.toLowerCase();
     for (const guess of guesses) {
-      const lowerGuess = guess.toLowerCase();
-      letters = updateLetters(letters, lowerGuess);
-      await printColoredGuessV2(word, lowerGuess);
+      letters = updateLetters(letters, guess.toLowerCase());
+      await printColoredGuessV2(word, guess.toLowerCase());
     }
     printLetters(letters);
   }
-  if (!!todaysGame && todaysGame.status !== STATUS_LOGS.PROGRESS) {
+  if (isTodayDone(todaysGame)) {
     await printLastGameGuesses(todaysGame);
     await printStats(logsCol);
-    await mongoClient.close();
-    close();
+    await exit(mongoClient, close);
     return;
   }
-  await logGame({status, word, guesses}, logsCol);
-  console.log("Let's play Wordle!\n");
-  while (guesses.length < 6) {
-    let guess = await ask('Enter a word: ');
+  initialGreet();
+  while (guesses.length < INITIAL_GUESSES.keys().length) {
+    let guess = await ask(ASK_INPUT_TEXT);
     guess = guess.toLowerCase();
     let isValid = await validateGuess(guess);
     while (!isValid) {
-      console.log('Word not recognized! Try another word');
-      guess = await ask('Enter a word: ');
+      invalidWordWarning();
+      guess = await ask(ASK_INPUT_TEXT);
       isValid = await validateGuess(guess);
     }
     guesses.push(guess);
@@ -54,12 +59,11 @@ const { mongoClient, getLogsCollection } = require("./services/db.service");
     }
     letters = updateLetters(letters, guess);
     printLetters(letters);
-    console.log(`Remaining guesses: ${6 - guesses.length}\n`);
+    printRemainingGuessesCount(INITIAL_GUESSES, guesses);
   }
-  if (status !== STATUS_LOGS.WIN && guesses.length >= 6) {
+  if (isLose(guesses, INITIAL_GUESSES)) {
     status = STATUS_LOGS.LOSE;
     await endGame(status, word, guesses, todaysGame, logsCol);
   }
-  await mongoClient.close();
-  close();
+  await exit(mongoClient, close);
 })();

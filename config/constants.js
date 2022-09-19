@@ -48,10 +48,13 @@ const LOG_FILE_PATH = path.join(__dirname, '..', 'db', 'logs.json');
 
 const PRINT_LETTERS_BREAKS = 'ejot';
 
+const ASK_INPUT_TEXT = 'Enter a word: ';
+
 module.exports = {
   INITIAL_LETTERS,
   INITIAL_GUESSES,
   PRINT_LETTERS_BREAKS,
   STATUS_LOGS,
   LOG_FILE_PATH,
+  ASK_INPUT_TEXT,
 }
