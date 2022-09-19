@@ -1,4 +1,4 @@
-const { printGuessesStats, getSuccessRate, getWinsAndGuesses, getTodaysDate } = require("./util.service");
+const { printGuessesStats, getSuccessRate, getWinsAndGuesses, getTodaysDate } = require("./util.service.ts");
 
 async function getAllGames(col) {
     return await col.find({}).toArray();

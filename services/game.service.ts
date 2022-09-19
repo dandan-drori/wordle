@@ -1,16 +1,19 @@
+import { Game, Letters } from '../interfaces/game';
+import { STATUS_LOGS } from '../enums/status-logs';
+import { Collection } from 'mongodb';
 const { GREY, WHITE, GREEN, YELLOW } = require("../config/colors");
-const { PRINT_LETTERS_BREAKS, STATUS_LOGS } = require("../config/constants");
-const { sleep } = require("./util.service");
+const { PRINT_LETTERS_BREAKS } = require("../config/constants");
+const { sleep } = require("./util.service.ts");
 const { logGame, printStats } = require("./log-v2.service");
 const { getAvailableWords } = require("./words.service");
 
-async function getRandomWord() {
+async function getRandomWord(): Promise<string> {
     const words = await getAvailableWords();
     const idx = Math.floor(Math.random() * words.length);
     return words[idx];
 }
 
-function printLetters(letters) {
+function printLetters(letters: Letters): void {
     let out = ' ';
     for (const letter in letters) {
         const color = letters[letter] ? GREY : WHITE;
@@ -20,7 +23,7 @@ function printLetters(letters) {
     console.log(out + '\n');
 }
 
-function updateLetters(letters, guess) {
+function updateLetters(letters: Letters, guess: string): Letters {
     for (let i = 0; i < guess.length; ++i) {
         const letter = guess.charAt(i);
         letters[letter] = true;
@@ -28,7 +31,7 @@ function updateLetters(letters, guess) {
     return letters;
 }
 
-async function printColoredGuessV2(word, guess) {
+async function printColoredGuessV2(word: string, guess: string): Promise<void> {
     const wordMap = getLettersMap(word);
     const matchMap = {};
     process.stdout.write(' ');
@@ -52,7 +55,7 @@ async function printColoredGuessV2(word, guess) {
     console.log(WHITE + '\n');
 }
 
-function getLettersMap(word) {
+function getLettersMap(word: string): {[key: string]: number} {
     const map = {};
     for (let i = 0; i < word.length; ++i) {
         map[word.charAt(i)] = i;
@@ -61,7 +64,7 @@ function getLettersMap(word) {
 }
 
 // unused in favor of v2
-async function printColoredGuess(word, guess) {
+async function printColoredGuess(word: string, guess: string): Promise<void> {
     const gl = guess.split('');
     const guessList = gl.map((letter) => {
         return {
@@ -95,13 +98,14 @@ async function printColoredGuess(word, guess) {
     console.log('');
 }
 
-async function validateGuess(guess) {
+async function validateGuess(guess: string): Promise<boolean> {
+    const words = await getAvailableWords();
     return typeof guess === "string" &&
         guess.length === 5 &&
         words.includes(guess);
 }
 
-async function endGame(status, word, guesses, todaysGame, col) {
+async function endGame(status: STATUS_LOGS, word: string, guesses: string[], todaysGame: Game, col: Collection): Promise<void> {
     const greet = status === STATUS_LOGS.WIN ? "\nGreat Job!" : "\nGame Over :(";
     console.log(greet);
     await logGame({status, word, guesses}, col);
@@ -109,7 +113,7 @@ async function endGame(status, word, guesses, todaysGame, col) {
     await printStats(col);
 }
 
-async function printLastGameGuesses(todaysGame) {
+async function printLastGameGuesses(todaysGame: Game): Promise<void> {
     const word = todaysGame.word.toLowerCase();
     for (const guess of todaysGame.guesses) {
         await sleep(100);
@@ -125,6 +129,5 @@ module.exports = {
     printColoredGuessV2,
     validateGuess,
     endGame,
-    printStats,
     printLastGameGuesses,
 }

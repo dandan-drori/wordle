@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
 const { ask, close } = require("./services/readline.service");
-const { INITIAL_LETTERS, STATUS_LOGS, INITIAL_GUESSES, ASK_INPUT_TEXT } = require("./config/constants");
+const { INITIAL_LETTERS, INITIAL_GUESSES, ASK_INPUT_TEXT } = require("./config/constants");
+const { STATUS_LOGS } = require("./enums/status-logs.ts");
+const { mongoClient, getLogsCollection } = require("./services/db.service");
 const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredGuessV2, endGame,
   printLastGameGuesses
 } = require("./services/game.service");
 const { getTodaysGame, printStats, logGame } = require("./services/log-v2.service");
-const { mongoClient, getLogsCollection } = require("./services/db.service");
 const { isInProgress, isTodayDone, progressGreet, exit, printRemainingGuessesCount, isLose, invalidWordWarning,
   initialGreet
-} = require("./services/util.service");
+} = require("./services/util.service.ts");
 
 ;(async () => {
   let status = STATUS_LOGS.PROGRESS;
@@ -38,7 +39,7 @@ const { isInProgress, isTodayDone, progressGreet, exit, printRemainingGuessesCou
     return;
   }
   initialGreet();
-  while (guesses.length < INITIAL_GUESSES.keys().length) {
+  while (guesses.length < Object.keys(INITIAL_GUESSES).length) {
     let guess = await ask(ASK_INPUT_TEXT);
     guess = guess.toLowerCase();
     let isValid = await validateGuess(guess);

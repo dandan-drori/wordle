@@ -1,6 +1,8 @@
+import { Guesses, Letters } from '../interfaces/game';
+
 const path = require('path');
 
-const INITIAL_LETTERS = {
+export const INITIAL_LETTERS: Letters = {
   a: false,
   b: false,
   c: false,
@@ -29,7 +31,7 @@ const INITIAL_LETTERS = {
   z: false,
 };
 
-const INITIAL_GUESSES = {
+export const INITIAL_GUESSES: Guesses = {
   1: 0,
   2: 0,
   3: 0,
@@ -38,23 +40,8 @@ const INITIAL_GUESSES = {
   6: 0,
 };
 
-const STATUS_LOGS = {
-  WIN: 'W',
-  LOSE: 'L',
-  PROGRESS: 'P',
-}
+export const LOG_FILE_PATH = path.join(__dirname, '..', 'db', 'logs.json');
 
-const LOG_FILE_PATH = path.join(__dirname, '..', 'db', 'logs.json');
+export const PRINT_LETTERS_BREAKS = 'ejot';
 
-const PRINT_LETTERS_BREAKS = 'ejot';
-
-const ASK_INPUT_TEXT = 'Enter a word: ';
-
-module.exports = {
-  INITIAL_LETTERS,
-  INITIAL_GUESSES,
-  PRINT_LETTERS_BREAKS,
-  STATUS_LOGS,
-  LOG_FILE_PATH,
-  ASK_INPUT_TEXT,
-}
+export const ASK_INPUT_TEXT = 'Enter a word: ';

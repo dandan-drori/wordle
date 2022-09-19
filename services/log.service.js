@@ -1,7 +1,8 @@
 const rawLogs = require("../db/logs.json");
 const { writeFile } = require("fs").promises;
 const { GREEN_BG, RESET } = require("../config/colors");
-const { INITIAL_GUESSES, STATUS_LOGS, LOG_FILE_PATH } = require("../config/constants");
+const { INITIAL_GUESSES, LOG_FILE_PATH } = require("../config/constants");
+import { STATUS_LOGS } from "../enums/status-logs.ts";
 
 function getKey() {
   const d = new Date();
