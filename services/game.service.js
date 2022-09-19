@@ -14,8 +14,7 @@ function printLetters(letters) {
     let out = ' ';
     for (const letter in letters) {
         const color = letters[letter] ? GREY : WHITE;
-        const breaks = PRINT_LETTERS_BREAKS;
-        const end = breaks.includes(letter) ? '\n ' : '';
+        const end = PRINT_LETTERS_BREAKS.includes(letter) ? '\n ' : '';
         out += color + letter.toUpperCase() + WHITE + end;
     }
     console.log(out + '\n');
