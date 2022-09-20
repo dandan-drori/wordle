@@ -1,6 +1,6 @@
 import { Game, Guesses } from '../interfaces/game';
 const { MongoClient } = require('mongodb');
-const { STATUS_LOGS } = require('../enums/status-logs.ts');
+const { STATUS_LOGS } = require('../enums/status-logs');
 const { RESET, GREEN_BG } = require("../config/colors");
 const { INITIAL_GUESSES } = require("../config/constants");
 
@@ -35,7 +35,7 @@ function getSuccessRate(wins: number, games: number): string {
 function printGuessesStats(guesses: Guesses): string {
   let out = '';
   for (const guess in guesses) {
-    out += RESET + '    ' + guess + ' ' + GREEN_BG + getSpaces(guesses[guess]) + (guesses[guess] || '') + RESET + '\n';
+    out += RESET + '    ' + guess + ' ' + GREEN_BG + getSpaces(guesses[guess as unknown as keyof Guesses]) + (guesses[guess as unknown as keyof Guesses] || '') + RESET + '\n';
   }
   return out;
 }
@@ -77,7 +77,7 @@ function printRemainingGuessesCount(initialGuesses: Guesses, guesses: string[]):
   console.log(`Remaining guesses: ${Object.keys(initialGuesses).length - guesses.length}\n`);
 }
 
-function isLose(guesses: string[], initialGuesses: Guesses): boolean {
+function isLose(status: string, guesses: string[], initialGuesses: Guesses): boolean {
   return status !== STATUS_LOGS.WIN && guesses.length >= Object.keys(initialGuesses).length;
 }
 

@@ -1,20 +1,21 @@
-const { printGuessesStats, getSuccessRate, getWinsAndGuesses, getTodaysDate } = require("./util.service.ts");
+import { printGuessesStats, getSuccessRate, getWinsAndGuesses, getTodaysDate } from "./util.service";
+import { Game } from "../interfaces/game";
 
-async function getAllGames(col) {
+export async function getAllGames(col): Promise<Game[]> {
     return await col.find({}).toArray();
 }
 
-async function getTodaysGame(col) {
+export async function getTodaysGame(col): Promise<Game> {
     const createdAt = getTodaysDate();
     return await col.findOne({createdAt});
 }
 
-async function logGame(log, col) {
+export async function logGame(log, col) {
     log.createdAt = getTodaysDate();
     return await col.updateOne({ createdAt: log.createdAt }, { $set: log }, { upsert: true });
 }
 
-async function printStats(col) {
+export async function printStats(col): Promise<void> {
     const games = await getAllGames(col);
     const {wins, guesses} = getWinsAndGuesses(games);
     console.log(`
@@ -27,8 +28,3 @@ ${printGuessesStats(guesses)}
 `);
 }
 
-module.exports = {
-    printStats,
-    getTodaysGame,
-    logGame,
-}

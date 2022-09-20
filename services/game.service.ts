@@ -16,7 +16,7 @@ async function getRandomWord(): Promise<string> {
 function printLetters(letters: Letters): void {
     let out = ' ';
     for (const letter in letters) {
-        const color = letters[letter] ? GREY : WHITE;
+        const color = letters[letter as keyof Letters] ? GREY : WHITE;
         const end = PRINT_LETTERS_BREAKS.includes(letter) ? '\n ' : '';
         out += color + letter.toUpperCase() + WHITE + end;
     }
@@ -26,14 +26,14 @@ function printLetters(letters: Letters): void {
 function updateLetters(letters: Letters, guess: string): Letters {
     for (let i = 0; i < guess.length; ++i) {
         const letter = guess.charAt(i);
-        letters[letter] = true;
+        letters[letter as keyof Letters] = true;
     }
     return letters;
 }
 
 async function printColoredGuessV2(word: string, guess: string): Promise<void> {
     const wordMap = getLettersMap(word);
-    const matchMap = {};
+    const matchMap: {[key: string]: boolean} = {}; 
     process.stdout.write(' ');
     for (let i = 0; i < word.length; ++i) {
         const currLetter = guess.charAt(i);
@@ -56,7 +56,7 @@ async function printColoredGuessV2(word: string, guess: string): Promise<void> {
 }
 
 function getLettersMap(word: string): {[key: string]: number} {
-    const map = {};
+    const map: {[key: string]: number} = {}; 
     for (let i = 0; i < word.length; ++i) {
         map[word.charAt(i)] = i;
     }

@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env ts-node
 
 const { ask, close } = require("./services/readline.service");
 const { INITIAL_LETTERS, INITIAL_GUESSES, ASK_INPUT_TEXT } = require("./config/constants");
@@ -10,7 +10,7 @@ const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredG
 const { getTodaysGame, printStats, logGame } = require("./services/log-v2.service");
 const { isInProgress, isTodayDone, progressGreet, exit, printRemainingGuessesCount, isLose, invalidWordWarning,
   initialGreet
-} = require("./services/util.service.ts");
+} = require("./services/util.service");
 
 ;(async () => {
   let status = STATUS_LOGS.PROGRESS;
@@ -62,7 +62,7 @@ const { isInProgress, isTodayDone, progressGreet, exit, printRemainingGuessesCou
     printLetters(letters);
     printRemainingGuessesCount(INITIAL_GUESSES, guesses);
   }
-  if (isLose(guesses, INITIAL_GUESSES)) {
+  if (isLose(status, guesses, INITIAL_GUESSES)) {
     status = STATUS_LOGS.LOSE;
     await endGame(status, word, guesses, todaysGame, logsCol);
   }
