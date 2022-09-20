@@ -1,8 +1,8 @@
 import { getWordsCollection } from "./db.service";
-import { ObjectId } from "mongodb";
+import { Collection, ObjectId } from 'mongodb';
 
-export async function getAvailableWords() Promise<{words: string[]}> {
-    const col = await getWordsCollection();
-    return await col.findOne({_id: ObjectId("6325f75b29bbba3145e82339")});
+export async function getAvailableWords(): Promise<{words: string[]}> {
+    const col: Collection = await getWordsCollection();
+    return await col.findOne({_id: new ObjectId("6325f75b29bbba3145e82339")}) as unknown as Promise<{words: string[]}>;
 }
 

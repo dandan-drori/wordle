@@ -11,7 +11,7 @@ export async function ask(question: string): Promise<string> {
   });
 }
 
-export function close(): void {
+export function closeRL(): void {
   rl.close();
 }
 

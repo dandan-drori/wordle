@@ -1,19 +1,19 @@
 import { Game, Letters } from '../interfaces/game';
 import { STATUS_LOGS } from '../enums/status-logs';
 import { Collection } from 'mongodb';
-const { GREY, WHITE, GREEN, YELLOW } = require("../config/colors");
-const { PRINT_LETTERS_BREAKS } = require("../config/constants");
-const { sleep } = require("./util.service.ts");
-const { logGame, printStats } = require("./log-v2.service");
-const { getAvailableWords } = require("./words.service");
+import { GREY, WHITE, GREEN, YELLOW } from "../config/colors";
+import { PRINT_LETTERS_BREAKS } from "../config/constants";
+import { sleep } from "./util.service";
+import { logGame, printStats } from "./log-v2.service";
+import { getAvailableWords } from "./words.service";
 
-async function getRandomWord(): Promise<string> {
-    const words = await getAvailableWords();
+export async function getRandomWord(): Promise<string> {
+    const { words } = await getAvailableWords();
     const idx = Math.floor(Math.random() * words.length);
     return words[idx];
 }
 
-function printLetters(letters: Letters): void {
+export function printLetters(letters: Letters): void {
     let out = ' ';
     for (const letter in letters) {
         const color = letters[letter as keyof Letters] ? GREY : WHITE;
@@ -23,7 +23,7 @@ function printLetters(letters: Letters): void {
     console.log(out + '\n');
 }
 
-function updateLetters(letters: Letters, guess: string): Letters {
+export function updateLetters(letters: Letters, guess: string): Letters {
     for (let i = 0; i < guess.length; ++i) {
         const letter = guess.charAt(i);
         letters[letter as keyof Letters] = true;
@@ -31,9 +31,9 @@ function updateLetters(letters: Letters, guess: string): Letters {
     return letters;
 }
 
-async function printColoredGuessV2(word: string, guess: string): Promise<void> {
+export async function printColoredGuessV2(word: string, guess: string): Promise<void> {
     const wordMap = getLettersMap(word);
-    const matchMap: {[key: string]: boolean} = {}; 
+    const matchMap: {[key: string]: boolean} = {};
     process.stdout.write(' ');
     for (let i = 0; i < word.length; ++i) {
         const currLetter = guess.charAt(i);
@@ -55,8 +55,8 @@ async function printColoredGuessV2(word: string, guess: string): Promise<void> {
     console.log(WHITE + '\n');
 }
 
-function getLettersMap(word: string): {[key: string]: number} {
-    const map: {[key: string]: number} = {}; 
+export function getLettersMap(word: string): {[key: string]: number} {
+    const map: {[key: string]: number} = {};
     for (let i = 0; i < word.length; ++i) {
         map[word.charAt(i)] = i;
     }
@@ -98,14 +98,14 @@ async function printColoredGuess(word: string, guess: string): Promise<void> {
     console.log('');
 }
 
-async function validateGuess(guess: string): Promise<boolean> {
-    const words = await getAvailableWords();
+export async function validateGuess(guess: string): Promise<boolean> {
+    const { words } = await getAvailableWords();
     return typeof guess === "string" &&
         guess.length === 5 &&
         words.includes(guess);
 }
 
-async function endGame(status: STATUS_LOGS, word: string, guesses: string[], todaysGame: Game, col: Collection): Promise<void> {
+export async function endGame(status: STATUS_LOGS, word: string, guesses: string[], todaysGame: Game, col: Collection): Promise<void> {
     const greet = status === STATUS_LOGS.WIN ? "\nGreat Job!" : "\nGame Over :(";
     console.log(greet);
     await logGame({status, word, guesses}, col);
@@ -113,21 +113,10 @@ async function endGame(status: STATUS_LOGS, word: string, guesses: string[], tod
     await printStats(col);
 }
 
-async function printLastGameGuesses(todaysGame: Game): Promise<void> {
+export async function printLastGameGuesses(todaysGame: Game): Promise<void> {
     const word = todaysGame.word.toLowerCase();
     for (const guess of todaysGame.guesses) {
         await sleep(100);
         await printColoredGuessV2(word, guess);
     }
-}
-
-module.exports = {
-    getRandomWord,
-    printLetters,
-    updateLetters,
-    printColoredGuess,
-    printColoredGuessV2,
-    validateGuess,
-    endGame,
-    printLastGameGuesses,
 }

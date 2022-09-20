@@ -1,24 +1,26 @@
 #!/usr/bin/env ts-node
 
-const { ask, close } = require("./services/readline.service");
-const { INITIAL_LETTERS, INITIAL_GUESSES, ASK_INPUT_TEXT } = require("./config/constants");
-const { STATUS_LOGS } = require("./enums/status-logs.ts");
-const { mongoClient, getLogsCollection } = require("./services/db.service");
-const { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredGuessV2, endGame,
+import { ask, closeRL } from "./services/readline.service";
+import { INITIAL_LETTERS, INITIAL_GUESSES, ASK_INPUT_TEXT } from "./config/constants";
+import { STATUS_LOGS } from "./enums/status-logs";
+import { mongoClient, getLogsCollection } from "./services/db.service";
+import { getRandomWord, printLetters, updateLetters, validateGuess ,printColoredGuessV2, endGame,
   printLastGameGuesses
-} = require("./services/game.service");
-const { getTodaysGame, printStats, logGame } = require("./services/log-v2.service");
-const { isInProgress, isTodayDone, progressGreet, exit, printRemainingGuessesCount, isLose, invalidWordWarning,
+} from "./services/game.service";
+import { getTodaysGame, printStats, logGame } from "./services/log-v2.service";
+import { isInProgress, isTodayDone, progressGreet, exit, printRemainingGuessesCount, isLose, invalidWordWarning,
   initialGreet
-} = require("./services/util.service");
+} from "./services/util.service";
+import { Game, Letters } from './interfaces/game';
+import { Collection } from 'mongodb';
 
 ;(async () => {
-  let status = STATUS_LOGS.PROGRESS;
-  let letters = INITIAL_LETTERS;
-  let word = await getRandomWord();
-  let guesses = [];
-  const logsCol = await getLogsCollection();
-  const todaysGame = await getTodaysGame(logsCol);
+  let status: STATUS_LOGS = STATUS_LOGS.PROGRESS;
+  let letters: Letters = INITIAL_LETTERS;
+  let word: string = await getRandomWord();
+  let guesses: string[] = [];
+  const logsCol: Collection = await getLogsCollection();
+  const todaysGame: Game = await getTodaysGame(logsCol);
   if (isInProgress(todaysGame)) {
     progressGreet();
     guesses = todaysGame.guesses;
@@ -35,7 +37,7 @@ const { isInProgress, isTodayDone, progressGreet, exit, printRemainingGuessesCou
   if (isTodayDone(todaysGame)) {
     await printLastGameGuesses(todaysGame);
     await printStats(logsCol);
-    await exit(mongoClient, close);
+    await exit(mongoClient, closeRL);
     return;
   }
   initialGreet();
@@ -66,5 +68,5 @@ const { isInProgress, isTodayDone, progressGreet, exit, printRemainingGuessesCou
     status = STATUS_LOGS.LOSE;
     await endGame(status, word, guesses, todaysGame, logsCol);
   }
-  await exit(mongoClient, close);
+  await exit(mongoClient, closeRL);
 })();

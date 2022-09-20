@@ -1,10 +1,10 @@
 import { Game, Guesses } from '../interfaces/game';
-const { MongoClient } = require('mongodb');
-const { STATUS_LOGS } = require('../enums/status-logs');
-const { RESET, GREEN_BG } = require("../config/colors");
-const { INITIAL_GUESSES } = require("../config/constants");
+import { MongoClient } from 'mongodb';
+import { STATUS_LOGS } from '../enums/status-logs';
+import { RESET, GREEN_BG } from "../config/colors";
+import { INITIAL_GUESSES } from "../config/constants";
 
-function getTodaysDate(): string {
+export function getTodaysDate(): string {
   const d = new Date();
   const dd = `${d.getDate()}`.padStart(2, '0');
   const mm = `${d.getMonth() + 1}`.padStart(2, '0');
@@ -12,7 +12,7 @@ function getTodaysDate(): string {
   return `${dd}-${mm}-${yyyy}`;
 }
 
-async function sleep(ms: number): Promise<void> {
+export async function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve();
@@ -20,7 +20,7 @@ async function sleep(ms: number): Promise<void> {
   });
 }
 
-function getSpaces(num: number): string {
+export function getSpaces(num: number): string {
   let spaces = '';
   for (let i = 1; i < num; ++i) {
     spaces += ' ';
@@ -28,11 +28,11 @@ function getSpaces(num: number): string {
   return spaces;
 }
 
-function getSuccessRate(wins: number, games: number): string {
+export function getSuccessRate(wins: number, games: number): string {
   return `${Math.floor(wins / games * 100)}%`;
 }
 
-function printGuessesStats(guesses: Guesses): string {
+export function printGuessesStats(guesses: Guesses): string {
   let out = '';
   for (const guess in guesses) {
     out += RESET + '    ' + guess + ' ' + GREEN_BG + getSpaces(guesses[guess as unknown as keyof Guesses]) + (guesses[guess as unknown as keyof Guesses] || '') + RESET + '\n';
@@ -40,14 +40,14 @@ function printGuessesStats(guesses: Guesses): string {
   return out;
 }
 
-function getWinsAndGuesses(games: Game[]) {
+export function getWinsAndGuesses(games: Game[]) {
   let wins = 0;
-  const guesses = INITIAL_GUESSES;
+  const guesses: Guesses = INITIAL_GUESSES;
   games.forEach((game) => {
     if (game.status === STATUS_LOGS.WIN) {
       wins++;
       const guess = game.guesses.length;
-      guesses[guess] = guesses[guess] + 1;
+      guesses[guess as keyof Guesses] = guesses[guess as keyof Guesses] + 1;
     }
   });
   return {
@@ -56,51 +56,35 @@ function getWinsAndGuesses(games: Game[]) {
   };
 }
 
-function isInProgress(todaysGame: Game): boolean {
+export function isInProgress(todaysGame: Game): boolean {
   return !!todaysGame && todaysGame.status === STATUS_LOGS.PROGRESS;
 }
 
-function isTodayDone(todaysGame: Game): boolean {
+export function isTodayDone(todaysGame: Game): boolean {
   return !!todaysGame && todaysGame.status !== STATUS_LOGS.PROGRESS;
 }
 
-function progressGreet(): void {
+export function progressGreet(): void {
   console.log('Resuming your last game...\n');
 }
 
-async function exit(mongoClient: typeof MongoClient, closeRL: Function): Promise<void> {
+export async function exit(mongoClient: MongoClient, closeRL: Function): Promise<void> {
   await mongoClient.close();
   closeRL();
 }
 
-function printRemainingGuessesCount(initialGuesses: Guesses, guesses: string[]): void {
+export function printRemainingGuessesCount(initialGuesses: Guesses, guesses: string[]): void {
   console.log(`Remaining guesses: ${Object.keys(initialGuesses).length - guesses.length}\n`);
 }
 
-function isLose(status: string, guesses: string[], initialGuesses: Guesses): boolean {
+export function isLose(status: string, guesses: string[], initialGuesses: Guesses): boolean {
   return status !== STATUS_LOGS.WIN && guesses.length >= Object.keys(initialGuesses).length;
 }
 
-function invalidWordWarning(): void {
+export function invalidWordWarning(): void {
   console.log('Word not recognized! Try another word.');
 }
 
-function initialGreet(): void {
+export function initialGreet(): void {
   console.log("Let's play Wordle!\n");
-}
-
-module.exports = {
-  getTodaysDate,
-  sleep,
-  getSuccessRate,
-  printGuessesStats,
-  getWinsAndGuesses,
-  isInProgress,
-  isTodayDone,
-  progressGreet,
-  exit,
-  printRemainingGuessesCount,
-  isLose,
-  invalidWordWarning,
-  initialGreet,
 }

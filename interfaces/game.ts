@@ -1,8 +1,9 @@
 export interface Game {
+    _id?: string,
     status: string,
     word: string,
     guesses: string[],
-    createdAt: string,
+    createdAt?: string,
 }
 
 export interface Guesses {

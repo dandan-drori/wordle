@@ -1,37 +1,31 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+import { Collection, MongoClient, ServerApiVersion } from 'mongodb';
 require('dotenv').config();
 
 const mongoClientOptions = { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 };
-const mongoClient = new MongoClient(process.env.DB_CONNECTION_STRING, mongoClientOptions);
+export const mongoClient = new MongoClient(process.env.DB_CONNECTION_STRING as string, mongoClientOptions);
 
-async function getLogsCollection() {
+export async function getLogsCollection(): Promise<Collection> {
     return new Promise((resolve, reject) => {
         mongoClient.connect(err => {
             if (err) {
                 console.log(`Error connection to database: ${err}`);
                 reject(err);
             }
-            const collection = mongoClient.db(process.env.DB_NAME).collection(process.env.COLLECTION_NAME);
+            const collection = mongoClient.db(process.env.DB_NAME as string).collection(process.env.COLLECTION_NAME as string);
             resolve(collection);
         });
     })
 }
 
-async function getWordsCollection() {
+export async function getWordsCollection(): Promise<Collection> {
     return new Promise((resolve, reject) => {
         mongoClient.connect(err => {
             if (err) {
                 console.log(`Error connection to database: ${err}`);
                 reject(err);
             }
-            const collection = mongoClient.db(process.env.DB_NAME).collection(process.env.STATIC_COLLECTION_NAME);
+            const collection = mongoClient.db(process.env.DB_NAME as string).collection(process.env.STATIC_COLLECTION_NAME as string);
             resolve(collection);
         });
     })
-}
-
-module.exports = {
-    getLogsCollection,
-    getWordsCollection,
-    mongoClient,
 }
