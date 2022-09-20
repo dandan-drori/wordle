@@ -1,17 +1,17 @@
 import { printGuessesStats, getSuccessRate, getWinsAndGuesses, getTodaysDate } from "./util.service";
 import { Game } from "../interfaces/game";
-import { Collection } from 'mongodb';
+import { Collection, UpdateResult } from 'mongodb';
 
 export async function getAllGames(col: Collection): Promise<Game[]> {
-    return (await col.find({}).toArray()) as unknown as Game[];
+    return (await col.find({}).toArray()) as unknown as Promise<Game[]>;
 }
 
 export async function getTodaysGame(col: Collection): Promise<Game> {
     const createdAt = getTodaysDate();
-    return await col.findOne({createdAt}) as unknown as Game;
+    return await col.findOne({createdAt}) as unknown as Promise<Game>;
 }
 
-export async function logGame(log: Game, col: Collection): Promise<any> {
+export async function logGame(log: Game, col: Collection): Promise<UpdateResult> {
     log.createdAt = getTodaysDate();
     return await col.updateOne({ createdAt: log.createdAt }, { $set: log }, { upsert: true });
 }
