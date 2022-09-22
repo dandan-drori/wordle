@@ -4,7 +4,7 @@ import { Collection } from 'mongodb';
 import { GREY, WHITE, GREEN, YELLOW } from "../config/colors";
 import { PRINT_LETTERS_BREAKS } from "../config/constants";
 import { sleep } from "./util.service";
-import { logGame, printStats } from "./log-v2.service";
+import { getTodaysGame, logGame, printStats } from './log-v2.service';
 import { getAvailableWords } from "./words.service";
 
 export async function getRandomWord(): Promise<string> {
@@ -109,6 +109,7 @@ export async function endGame(status: STATUS_LOGS, word: string, guesses: string
     const greet = status === STATUS_LOGS.WIN ? "\nGreat Job!" : "\nGame Over :(";
     console.log(greet);
     await logGame({status, word, guesses}, col);
+    todaysGame = todaysGame ?? await getTodaysGame(col);
     await printLastGameGuesses(todaysGame);
     await printStats(col);
 }
