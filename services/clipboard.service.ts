@@ -6,9 +6,7 @@ export async function copyResultToClipboard(word: string, guesses: string[]): Pr
     guesses.forEach(guess => {
         out += `${generateColoredGuess(word, guess)}\n`;
     })
-    const isWin = process.platform === "win32";
-    const osCopyCommand = isWin ? 'clip' : 'pbcopy';
-    await execPrm(`echo "${out}" | ${osCopyCommand}`);
+    await execPrm(`echo "${out}" | clipboard`);
     console.log('Game result copied to clipboard!');
 }
 

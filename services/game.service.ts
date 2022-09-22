@@ -6,6 +6,7 @@ import { PRINT_LETTERS_BREAKS } from "../config/constants";
 import { sleep } from "./util.service";
 import { getTodaysGame, logGame, printStats } from './log-v2.service';
 import { getAvailableWords } from "./words.service";
+import { copyResultToClipboard } from './clipboard.service';
 
 export async function getRandomWord(): Promise<string> {
     const { words } = await getAvailableWords();
@@ -112,6 +113,7 @@ export async function endGame(status: STATUS_LOGS, word: string, guesses: string
     todaysGame = todaysGame ?? await getTodaysGame(col);
     await printLastGameGuesses(todaysGame);
     await printStats(col);
+    await copyResultToClipboard(word, guesses);
 }
 
 export async function printLastGameGuesses(todaysGame: Game): Promise<void> {
